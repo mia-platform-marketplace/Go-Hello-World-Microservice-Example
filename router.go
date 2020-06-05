@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-
 package main
-
 
 import (
 	"encoding/json"
@@ -25,11 +23,9 @@ import (
 	"github.com/gorilla/mux"
 )
 
-
 type HelloWorld struct {
 	Msg string `json:"msg"`
 }
-
 
 func setupRouter(router *mux.Router) {
 	// Setup your routes here.
