@@ -2,6 +2,7 @@
 
 [![Build Status][github-actions-svg]][github-actions]
 [![Go Report Card][go-report-card]][go-report-card-link]
+[![Coverage Status][coverall-svg]][coverall-io]
 
 This walkthrough will explain you how to correctly create a microservice in Go that returns an hello message from the DevOps Console.
 
@@ -54,3 +55,5 @@ Congratulations! You have successfully learnt how to use our Go _Hello World_ Ex
 [github-actions-svg]: https://github.com/mia-platform-marketplace/Go-Hello-World-Microservice-Example/workflows/Go/badge.svg
 [go-report-card]: https://goreportcard.com/badge/github.com/mia-platform-marketplace/Go-Hello-World-Microservice-Example
 [go-report-card-link]: https://goreportcard.com/report/github.com/mia-platform-marketplace/Go-Hello-World-Microservice-Example
+[coverall-svg]: https://coveralls.io/repos/github/mia-platform-marketplace/Go-Hello-World-Microservice-Example/badge.svg?branch=master
+[coverall-io]: https://coveralls.io/github/mia-platform-marketplace/Go-Hello-World-Microservice-Example?branch=master
