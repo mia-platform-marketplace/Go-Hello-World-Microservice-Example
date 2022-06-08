@@ -17,7 +17,6 @@
 package helpers
 
 import (
-	"github.com/stretchr/testify/require"
 	"net/http"
 	"os"
 	"os/signal"
@@ -25,6 +24,8 @@ import (
 	"syscall"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/require"
 
 	"github.com/sirupsen/logrus/hooks/test"
 )
