@@ -7,12 +7,12 @@ By default the module name is "service", if you want to change it, please rememb
 ## Development Local
 
 To develop the service locally you need:
-    - Go 1.18+
+    - Go 1.20+
 
 To start the application locally
 
 ```go
-    go run mia_template_service_name_placeholder
+go run mia_template_service_name_placeholder
 ```
 
 By default the service will run on port 8080, to change the port please set `HTTP_PORT` env variable
@@ -22,5 +22,5 @@ By default the service will run on port 8080, to change the port please set `HTT
 To test the application use:
 
 ```go
-    go test -v
+go test -v
 ```
