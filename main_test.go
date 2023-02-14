@@ -30,15 +30,13 @@ func TestEntryPoint(t *testing.T) {
 	t.Run("opens server on port 3000", func(t *testing.T) {
 		shutdown := make(chan os.Signal, 1)
 
-		os.Setenv("HTTP_PORT", "3000")
+		t.Setenv("HTTP_PORT", "3000")
+		t.Setenv("SERVICE_VERSION", "myVersion")
 
 		go func() {
 			entrypoint(shutdown)
 		}()
-		defer func() {
-			os.Unsetenv("HTTP_PORT")
-			shutdown <- syscall.SIGTERM
-		}()
+		defer func() { shutdown <- syscall.SIGTERM }()
 
 		time.Sleep(1 * time.Second)
 
@@ -50,14 +48,13 @@ func TestEntryPoint(t *testing.T) {
 	t.Run("sets correct path prefix", func(t *testing.T) {
 		shutdown := make(chan os.Signal, 1)
 
-		os.Setenv("SERVICE_PREFIX", "/prefix")
+		t.Setenv("SERVICE_PREFIX", "/prefix")
+		t.Setenv("SERVICE_VERSION", "myVersion")
+
 		go func() {
 			entrypoint(shutdown)
 		}()
-		defer func() {
-			os.Unsetenv("SERVICE_PREFIX")
-			shutdown <- syscall.SIGTERM
-		}()
+		defer func() { shutdown <- syscall.SIGTERM }()
 
 		time.Sleep(1 * time.Second)
 
@@ -67,7 +64,8 @@ func TestEntryPoint(t *testing.T) {
 	})
 
 	t.Run("GracefulShutdown works properly", func(t *testing.T) {
-		os.Setenv("DELAY_SHUTDOWN_SECONDS", "3")
+		t.Setenv("DELAY_SHUTDOWN_SECONDS", "3")
+		t.Setenv("SERVICE_VERSION", "myVersion")
 
 		shutdown := make(chan os.Signal, 1)
 		done := make(chan bool, 1)

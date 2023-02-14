@@ -17,29 +17,56 @@
 package main
 
 import (
-	"encoding/json"
+	"context"
+	"fmt"
 	"net/http"
+	"path"
 
-	"github.com/gorilla/mux"
+	swagger "github.com/davidebianchi/gswagger"
+	oasfiber "github.com/davidebianchi/gswagger/support/fiber"
+	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/pprof"
+	"github.com/mia-platform/glogger/v3/middleware"
+	"github.com/sirupsen/logrus"
 )
 
 type HelloWorld struct {
 	Msg string `json:"msg"`
 }
 
-func setupRouter(router *mux.Router) {
-	// Setup your routes here.
-	router.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
-		w.Header().Add("Content-Type", "application/json")
-		helloWorld := HelloWorld{
-			Msg: "Hello world!",
-		}
-		body, err := json.Marshal(&helloWorld)
-		if err != nil {
-			w.WriteHeader(http.StatusServiceUnavailable)
-			w.Write(nil)
-		}
-		w.WriteHeader(http.StatusOK)
-		w.Write(body)
+func setupRouter(env EnvironmentVariables, log *logrus.Logger) (*fiber.App, error) {
+	app := fiber.New()
+	app.Use(middleware.RequestFiberMiddlewareLogger(log, []string{}))
+	StatusRoutes(app, "feature-toggle-service", env.ServiceVersion)
+	if env.ServicePrefix != "" && env.ServicePrefix != "/" {
+		log.WithField("servicePrefix", env.ServicePrefix).Trace("applying service prefix")
+		app.Use(pprof.New(pprof.Config{Prefix: fmt.Sprintf("%s/", path.Clean(env.ServicePrefix))}))
+	}
+
+	oasRouter, err := swagger.NewRouter(oasfiber.NewRouter(app), swagger.Options{
+		Context: context.Background(),
+		Openapi: &openapi3.T{
+			Info: &openapi3.Info{
+				Title:   "feature-toggle-service",
+				Version: env.ServiceVersion,
+			},
+		},
+		JSONDocumentationPath: "/documentations/json",
+		YAMLDocumentationPath: "/documentations/yaml",
+		PathPrefix:            env.ServicePrefix,
 	})
+	if err != nil {
+		return nil, err
+	}
+
+	if _, err := oasRouter.AddRoute(http.MethodGet, "/", HelloHandler, HelloSchema); err != nil {
+		return nil, err
+	}
+
+	if err = oasRouter.GenerateAndExposeOpenapi(); err != nil {
+		return nil, err
+	}
+
+	return app, nil
 }
